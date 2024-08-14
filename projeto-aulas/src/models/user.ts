@@ -1,4 +1,5 @@
 import { User } from "../types/user";
+import { removeUndefinedAttributes } from "../utils/functionUtils";
 
 let users = [
   {
@@ -22,11 +23,23 @@ export default class UserModel {
     return users;
   }
 
+  getById(id: number | string): User | undefined {
+    return users.filter((user) => user.id == id)[0];
+  }
+
   create(user: User) {
     users.push(user);
   }
 
-  delete(id: number) {
-    users = users.filter((user) => user.id !== id);
+  update(id: number | string, changes: Partial<User>) {
+    removeUndefinedAttributes(changes);
+    users = users.map((user) => {
+      if (user.id == id) return { ...user, ...changes };
+      return user;
+    });
+  }
+
+  delete(id: number | string) {
+    users = users.filter((user) => user.id != id);
   }
 }
