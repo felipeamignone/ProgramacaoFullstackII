@@ -1,3 +1,5 @@
+import { User } from "../types/user";
+
 let users = [
   {
     id: 1,
@@ -15,16 +17,8 @@ let users = [
   },
 ];
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  city: string;
-  uf: string;
-}
-
 export default class UserModel {
-  getAll() {
+  getAll(): User[] {
     return users;
   }
 

@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import UserModel from "../models/userModel";
+import UserModel from "../models/user";
+import { User } from "../types/user";
 
 export default class UsersController {
-  getAll(_: unknown, res: Response) {
+  getAll(_, res: Response) {
     try {
       let user = new UserModel();
       let lista = user.getAll();
@@ -15,7 +16,7 @@ export default class UsersController {
     }
   }
 
-  create(req: Request, res: Response) {
+  create(req: Request<any, any, User>, res: Response) {
     try {
       const { id, name, email, city, uf } = req.body;
 
