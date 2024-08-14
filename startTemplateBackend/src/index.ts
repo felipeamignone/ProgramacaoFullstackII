@@ -1,10 +1,10 @@
 import express from "express";
-import usuarioRouter from "./routes/usuarioRoute.ts";
 
 const app = express();
-app.use(express.json());
-app.use("/usuarios", usuarioRouter);
+const PORT = 5000;
 
-app.listen(5000, function () {
+app.use(express.json());
+
+app.listen(PORT, () => {
   console.log("Servidor rodando em http://localhost:5000");
 });
