@@ -1,6 +1,6 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import swaggerOutput from "./swagger_output.json";
+import swaggerOutput from "../swagger_output.json";
 
 import apiRouter from "./routes";
 
