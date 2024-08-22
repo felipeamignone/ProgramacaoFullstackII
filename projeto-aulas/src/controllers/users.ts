@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user";
-import { User } from "../types/user";
+import { UserDTO } from "../types/user";
+import UserType from "../models/userType";
 
 export default class UsersController {
-  getAll(_, res: Response) {
+  async getAll(_, res: Response) {
     try {
       let user = new UserModel();
-      let lista = user.getAll();
+      let lista = await user.getAll();
 
       res.status(200).json(lista);
     } catch (error) {
@@ -16,17 +17,19 @@ export default class UsersController {
     }
   }
 
-  getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const user = new UserModel();
-      const userFound = user.getById(id);
 
-      if (id && userFound) {
-        res.status(200).json(userFound);
-        return;
+      if (id) {
+        const user = new UserModel({ id });
+        const userFound = await user.getById();
+
+        if (userFound) {
+          res.status(200).json(userFound);
+          return;
+        }
       }
-
       res.status(404).json({ msg: "Usuário não encontrado" });
     } catch (error) {
       res.status(500).json({
@@ -35,13 +38,23 @@ export default class UsersController {
     }
   }
 
-  create(req: Request<any, any, User>, res: Response) {
+  create(req: Request<any, any, UserDTO>, res: Response) {
     try {
-      const { id, name, email, city, uf } = req.body;
+      const { name, email, active, psw, type } = req.body;
 
-      if (id && name && email && city && uf) {
-        let user = new UserModel();
-        user.create({ id, name, email, city, uf });
+      if (name && email && active !== undefined && psw && type?.id) {
+        let user = new UserModel({
+          name,
+          email,
+          active,
+          psw,
+          type: new UserType(type),
+        });
+        const result = user.create();
+
+        if (!result) {
+          throw new Error();
+        }
 
         res.status(200).json({ msg: "Usuário criado com sucesso!" });
         return;
@@ -55,20 +68,30 @@ export default class UsersController {
     }
   }
 
-  update(req: Request<any, any, Partial<User>>, res: Response) {
+  async update(req: Request<any, any, Partial<UserDTO>>, res: Response) {
     try {
       const { id } = req.params;
-      const { name, email, city, uf } = req.body;
+      const { name, email, active, psw, type } = req.body;
 
-      if (id && (name || email || city || uf)) {
-        let user = new UserModel();
+      if (
+        id &&
+        (name ||
+          email ||
+          active !== undefined ||
+          psw ||
+          type?.id ||
+          type?.description)
+      ) {
+        let user = new UserModel({ id });
 
-        if (!user.getById(id)) {
+        const userFound = await user.getById();
+
+        if (!userFound) {
           res.status(404).json({ msg: "Usuário não encontrado" });
           return;
         }
 
-        user.update(id, { name, email, city, uf });
+        user.update(id, { name, email, active, psw });
 
         res.status(200).json({ msg: "Usuário atualizado com sucesso!" });
         return;
@@ -87,9 +110,9 @@ export default class UsersController {
       const { id } = req.params;
 
       if (id) {
-        let user = new UserModel();
+        let user = new UserModel({ id });
 
-        if (!user.getById(id)) {
+        if (!user.getById()) {
           res.status(404).json({ msg: "Usuário não encontrado" });
           return;
         }

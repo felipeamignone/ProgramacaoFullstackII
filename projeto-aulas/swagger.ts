@@ -1,4 +1,6 @@
 import swaggerAutogen from "swagger-autogen";
+import UserModel from "./src/models/user";
+import UserType from "./src/models/userType";
 
 const doc = {
   info: {
@@ -18,6 +20,27 @@ const doc = {
         type: "http",
         scheme: "bearer",
       },
+    },
+    schemas: {
+      userModel: new UserModel({
+        id: "0",
+        name: "UserName",
+        email: "user@email.com",
+        active: true,
+        psw: "password123",
+        type: new UserType({ id: "1", description: "userType" }),
+      }).toJSON(),
+      userModelList: [
+        new UserModel({
+          id: "0",
+          name: "UserName",
+          email: "user@email.com",
+          active: true,
+          psw: "password123",
+          type: new UserType({ id: "1", description: "userType" }),
+        }).toJSON(),
+      ],
+      userType: new UserType({ id: "1", description: "userType" }).toJSON(),
     },
   },
 };
