@@ -1,1 +1,1 @@
-export { default } from "./db";
+export { dispatchLastInserted, dispatchNonQuery, dispatchQuery } from "./db";

@@ -1,9 +1,8 @@
 import { UserDTO, UserDB, UserTypeDB } from "../types/user";
 import { removeUndefinedAttributes } from "../utils/functionUtils";
-import Database from "../db";
+import { dispatchQuery, dispatchNonQuery } from "../db";
 import UserType from "./userType";
 
-const db = new Database();
 export default class UserModel {
   #id?: string;
   #name?: string;
@@ -13,16 +12,16 @@ export default class UserModel {
   #type?: UserType;
 
   constructor(
-    user?: Partial<{
+    user: Partial<{
       id: string;
       name: string;
       email: string;
       active: boolean;
       psw: string;
       type: UserType;
-    }>
+    }> = {}
   ) {
-    const { id, name, email, active, psw, type } = user || {};
+    const { id, name, email, active, psw, type } = user;
 
     this.#id = id;
     this.#name = name;
@@ -83,7 +82,7 @@ export default class UserModel {
   async getAll(): Promise<UserModel[]> {
     const query =
       "select * from tb_usuario u inner join tb_perfil p on u.per_id = p.per_id";
-    const rows = (await db.ExecutaComando(query)) as Array<UserDB & UserTypeDB>;
+    const rows = (await dispatchQuery(query)) as Array<UserDB & UserTypeDB>;
 
     return rows.map(
       (row) =>
@@ -105,7 +104,7 @@ export default class UserModel {
     const query =
       "select * from tb_usuario u inner join tb_perfil p on u.per_id = p.per_id where u.usu_id = ?";
     const values = [this.#id];
-    const rows = (await db.ExecutaComando(query, values)) as Array<
+    const rows = (await dispatchQuery(query, values)) as Array<
       UserDB & UserTypeDB
     >;
 
@@ -137,13 +136,16 @@ export default class UserModel {
       this.#type?.id,
     ];
 
-    const result = await db.ExecutaComandoNonQuery(query, value);
+    const result = await dispatchNonQuery(query, value);
 
     return Boolean(result);
   }
 
   update(id: string | string, changes: Partial<UserDTO>) {
     removeUndefinedAttributes(changes);
+
+    const keys = Object.keys(changes);
+    const value = [id, ...Object.values(changes)];
   }
 
   delete(id: string | string) {}

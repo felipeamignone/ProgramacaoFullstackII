@@ -4,8 +4,8 @@ export default class UserType {
   #id?: string;
   #description?: string;
 
-  constructor(userType?: Partial<{ id: string; description: string }>) {
-    const { id, description } = userType || {};
+  constructor(userType: Partial<{ id: string; description: string }> = {}) {
+    const { id, description } = userType;
     this.#id = id;
     this.#description = description;
   }

@@ -1,53 +1,34 @@
-import mysql from "mysql2";
+import mysql, { PoolOptions, QueryResult, ResultSetHeader } from "mysql2";
 
-class Database {
-  #conexao;
+const access: PoolOptions = {
+  host: "132.226.245.178",
+  database: "PFS2_10442312344",
+  user: "10442312344",
+  password: "10442312344",
+};
 
-  get conexao() {
-    return this.#conexao;
-  }
-  set conexao(conexao) {
-    this.#conexao = conexao;
-  }
+const conn = mysql.createPool(access);
 
-  constructor() {
-    this.#conexao = mysql.createPool({
-      host: "132.226.245.178", //endereço do nosso banco de dados na nuvem
-      database: "PFS2_10442312344", //a database de cada um de vocês possui a nomenclatura DB_10442312344
-      user: "10442312344", // usuario e senha de cada um de vocês é o RA
-      password: "10442312344",
+export const dispatchQuery = (sql: string, values?: unknown[]) =>
+  new Promise((resolve, reject) => {
+    conn.query<QueryResult>(sql, values, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
     });
-  }
+  });
 
-  ExecutaComando(sql: string, valores?: unknown[]) {
-    var cnn = this.#conexao;
-    return new Promise(function (res, rej) {
-      cnn.query(sql, valores, function (error, results, fields) {
-        if (error) rej(error);
-        else res(results);
-      });
+export const dispatchNonQuery = (sql: string, values: unknown[]) =>
+  new Promise((resolve, reject) => {
+    conn.query<QueryResult>(sql, values, (err, result) => {
+      if (err) reject(err);
+      resolve((result as ResultSetHeader).affectedRows > 0);
     });
-  }
+  });
 
-  ExecutaComandoNonQuery(sql, valores) {
-    var cnn = this.#conexao;
-    return new Promise(function (res, rej) {
-      cnn.query(sql, valores, function (error, results, fields) {
-        if (error) rej(error);
-        else res(results.affectedRows > 0);
-      });
+export const dispatchLastInserted = (sql: string, values: unknown[]) =>
+  new Promise((resolve, reject) => {
+    conn.query<QueryResult>(sql, values, (err, result) => {
+      if (err) reject(err);
+      resolve((result as ResultSetHeader).insertId);
     });
-  }
-
-  ExecutaComandoLastInserted(sql, valores) {
-    var cnn = this.#conexao;
-    return new Promise(function (res, rej) {
-      cnn.query(sql, valores, function (error, results, fields) {
-        if (error) rej(error);
-        else res(results.insertId);
-      });
-    });
-  }
-}
-
-export default Database;
+  });

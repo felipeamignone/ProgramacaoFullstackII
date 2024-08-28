@@ -128,6 +128,9 @@
                   },
                   "psw": {
                     "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
                   }
                 }
               }
