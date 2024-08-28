@@ -1,5 +1,5 @@
 import { UserDTO, UserDB, UserTypeDB } from "../types/user";
-import { removeUndefinedAttributes } from "../utils/functionUtils";
+import { mapUserDBToModel } from "../utils/functionUtils";
 import { dispatchQuery, dispatchNonQuery } from "../db";
 import UserType from "./userType";
 
@@ -80,55 +80,27 @@ export default class UserModel {
   }
 
   async getAll(): Promise<UserModel[]> {
-    const query =
+    const sql =
       "select * from tb_usuario u inner join tb_perfil p on u.per_id = p.per_id";
-    const rows = (await dispatchQuery(query)) as Array<UserDB & UserTypeDB>;
+    const rows = (await dispatchQuery(sql)) as Array<UserDB>;
 
-    return rows.map(
-      (row) =>
-        new UserModel({
-          id: row.usu_id,
-          name: row.usu_nome,
-          email: row.usu_email,
-          active: Boolean(row.usu_ativo),
-          psw: row.usu_senha,
-          type: new UserType({
-            id: row.per_id,
-            description: row.per_descricao,
-          }),
-        })
-    );
+    return rows.map((row) => mapUserDBToModel(row));
   }
 
   async getById(): Promise<UserModel | undefined> {
-    const query =
+    const sql =
       "select * from tb_usuario u inner join tb_perfil p on u.per_id = p.per_id where u.usu_id = ?";
     const values = [this.#id];
-    const rows = (await dispatchQuery(query, values)) as Array<
-      UserDB & UserTypeDB
-    >;
+    const rows = (await dispatchQuery(sql, values)) as Array<UserDB>;
 
-    return rows.map(
-      (row) =>
-        new UserModel({
-          id: row.usu_id,
-          name: row.usu_nome,
-          email: row.usu_email,
-          active: Boolean(row.usu_ativo),
-          psw: row.usu_senha,
-          type: new UserType({
-            id: row.per_id,
-            description: row.per_descricao,
-          }),
-        })
-    )[0];
+    return rows.map((row) => mapUserDBToModel(row))[0];
   }
 
   async create() {
-    const query =
+    const sql =
       "insert into tb_usuario (usu_nome, usu_email, usu_ativo, usu_senha, per_id) values (?, ?, ?, ?, ?)";
 
-    const value = [
+    const values = [
       this.#name,
       this.#email,
       this.#active,
@@ -136,19 +108,43 @@ export default class UserModel {
       this.#type?.id,
     ];
 
-    const result = await dispatchNonQuery(query, value);
+    const result = await dispatchNonQuery(sql, values);
 
     return Boolean(result);
   }
 
-  update(id: string | string, changes: Partial<UserDTO>) {
-    removeUndefinedAttributes(changes);
+  async update() {
+    const sql = `update tb_usuario set 
+    usu_nome = coalesce(?, usu_nome), 
+    usu_email = coalesce(?, usu_email), 
+    usu_ativo = coalesce(?, usu_ativo),
+    usu_senha = coalesce(?, usu_senha), 
+    per_id = coalesce(?, per_id)
+    where usu_id = ?
+    `;
 
-    const keys = Object.keys(changes);
-    const value = [id, ...Object.values(changes)];
+    const values = [
+      this.#name,
+      this.#email,
+      this.#active,
+      this.#psw,
+      this.#type?.id,
+      this.#id,
+    ];
+
+    const result = await dispatchNonQuery(sql, values);
+
+    return Boolean(result);
   }
 
-  delete(id: string | string) {}
+  async delete() {
+    const sql = "delete from tb_usuario where usu_id = ?";
+    const values = [this.#id];
+
+    const result = await dispatchNonQuery(sql, values);
+
+    return Boolean(result);
+  }
 
   toJSON(): Partial<UserDTO> {
     return {

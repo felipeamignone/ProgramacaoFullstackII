@@ -82,7 +82,14 @@ export default class UsersController {
           type?.id ||
           type?.description)
       ) {
-        let user = new UserModel({ id });
+        let user = new UserModel({
+          id,
+          name,
+          email,
+          active,
+          psw,
+          type: new UserType(type),
+        });
 
         const userFound = await user.getById();
 
@@ -91,7 +98,11 @@ export default class UsersController {
           return;
         }
 
-        user.update(id, { name, email, active, psw });
+        const result = await user.update();
+
+        if (!result) {
+          throw new Error();
+        }
 
         res.status(200).json({ msg: "Usuário atualizado com sucesso!" });
         return;
@@ -105,19 +116,25 @@ export default class UsersController {
     }
   }
 
-  delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
 
       if (id) {
         let user = new UserModel({ id });
 
-        if (!user.getById()) {
+        const userFound = await user.getById();
+
+        if (!userFound) {
           res.status(404).json({ msg: "Usuário não encontrado" });
           return;
         }
 
-        user.delete(id);
+        const result = await user.delete();
+
+        if (!result) {
+          throw new Error();
+        }
 
         res.status(200).json({ msg: "Usuário deletado com sucesso!" });
         return;

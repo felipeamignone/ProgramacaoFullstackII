@@ -21,7 +21,7 @@ export const dispatchNonQuery = (sql: string, values: unknown[]) =>
   new Promise((resolve, reject) => {
     conn.query<QueryResult>(sql, values, (err, result) => {
       if (err) reject(err);
-      resolve((result as ResultSetHeader).affectedRows > 0);
+      resolve((result as ResultSetHeader)?.affectedRows > 0);
     });
   });
 
