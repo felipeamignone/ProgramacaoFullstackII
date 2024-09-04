@@ -96,6 +96,16 @@ export default class UserModel {
     return rows.map((row) => mapUserDBToModel(row))[0];
   }
 
+  async getByLogin(): Promise<UserModel | undefined> {
+    const sql =
+      "select * from tb_usuario u inner join tb_perfil p on u.per_id = p.per_id where u.usu_email = ? and u.usu_senha = ?";
+
+    const values = [this.#email, this.#psw];
+    const rows = (await dispatchQuery(sql, values)) as Array<UserDB>;
+
+    return rows.map((row) => mapUserDBToModel(row))[0];
+  }
+
   async create() {
     const sql =
       "insert into tb_usuario (usu_nome, usu_email, usu_ativo, usu_senha, per_id) values (?, ?, ?, ?, ?)";
