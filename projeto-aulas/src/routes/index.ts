@@ -23,9 +23,9 @@ const addSwaggerPropertiesTag = (_, __, next: NextFunction) => {
   */
   next();
 };
-const addSwaggerLoginTag = (_, __, next: NextFunction) => {
+const addSwaggerAuthTag = (_, __, next: NextFunction) => {
   /* 
-    #swagger.tags = ['Login']
+    #swagger.tags = ['Authentication']
     #swagger.security = []
   */
   next();
@@ -40,6 +40,6 @@ router.use(
   addSwaggerPropertiesTag,
   propertiesRouters
 );
-router.use("/api/login", addSwaggerLoginTag, loginRouter);
+router.use("/api/auth", addSwaggerAuthTag, loginRouter);
 
 export default router;

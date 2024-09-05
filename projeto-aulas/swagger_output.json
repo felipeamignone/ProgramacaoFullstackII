@@ -393,10 +393,10 @@
         ]
       }
     },
-    "/api/login/": {
+    "/api/auth/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authentication"
         ],
         "description": "",
         "responses": {
@@ -431,6 +431,23 @@
             }
           }
         }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": []
       }
     }
   },

@@ -43,4 +43,16 @@ export default class LoginController {
       });
     }
   }
+
+  async logout(req: Request, res: Response) {
+    try {
+      res.clearCookie("token");
+
+      res.status(200).json({ msg: "Usuário deslogado!" });
+    } catch (error) {
+      res.status(500).json({
+        msg: "Não foi possível concluir a requisição, tente novamente mais tarde",
+      });
+    }
+  }
 }
