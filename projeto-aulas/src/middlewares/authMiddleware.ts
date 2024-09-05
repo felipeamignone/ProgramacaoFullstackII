@@ -32,9 +32,9 @@ export const validateUserByToken = async (
   if (token) {
     try {
       const jwtPayload = jwt.verify(token, SECRET_KEY);
-      const user = new UserModel({ id: (jwtPayload as JWTPayload).userId });
+      const model = new UserModel({ id: (jwtPayload as JWTPayload).userId });
 
-      const foundUser = await user.getById();
+      const foundUser = await model.getById();
 
       if (!foundUser?.active) {
         res.status(401).json({ msg: "Não autorizado!" });

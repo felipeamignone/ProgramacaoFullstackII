@@ -6,8 +6,8 @@ import UserType from "../models/userType";
 export default class UsersController {
   async getAll(_, res: Response) {
     try {
-      let user = new UserModel();
-      let lista = await user.getAll();
+      let model = new UserModel();
+      let lista = await model.getAll();
 
       res.status(200).json(lista);
     } catch (error) {
@@ -22,8 +22,8 @@ export default class UsersController {
       const { id } = req.params;
 
       if (id) {
-        const user = new UserModel({ id });
-        const userFound = await user.getById();
+        const model = new UserModel({ id });
+        const userFound = await model.getById();
 
         if (userFound) {
           res.status(200).json(userFound);
@@ -43,14 +43,14 @@ export default class UsersController {
       const { name, email, active, psw, type } = req.body;
 
       if (name && email && active !== undefined && psw && type?.id) {
-        let user = new UserModel({
+        let model = new UserModel({
           name,
           email,
           active,
           psw,
           type: new UserType(type),
         });
-        const result = await user.create();
+        const result = await model.create();
 
         if (!result) {
           throw new Error();
@@ -82,7 +82,7 @@ export default class UsersController {
           type?.id ||
           type?.description)
       ) {
-        let user = new UserModel({
+        let model = new UserModel({
           id,
           name,
           email,
@@ -91,14 +91,14 @@ export default class UsersController {
           type: new UserType(type),
         });
 
-        const userFound = await user.getById();
+        const userFound = await model.getById();
 
         if (!userFound) {
           res.status(404).json({ msg: "Usuário não encontrado" });
           return;
         }
 
-        const result = await user.update();
+        const result = await model.update();
 
         if (!result) {
           throw new Error();
@@ -121,16 +121,16 @@ export default class UsersController {
       const { id } = req.params;
 
       if (id) {
-        let user = new UserModel({ id });
+        let model = new UserModel({ id });
 
-        const userFound = await user.getById();
+        const userFound = await model.getById();
 
         if (!userFound) {
           res.status(404).json({ msg: "Usuário não encontrado" });
           return;
         }
 
-        const result = await user.delete();
+        const result = await model.delete();
 
         if (!result) {
           throw new Error();

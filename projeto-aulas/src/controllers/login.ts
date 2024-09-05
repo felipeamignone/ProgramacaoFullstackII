@@ -8,9 +8,9 @@ export default class LoginController {
       const { email, psw } = req.body;
 
       if (email && psw) {
-        const user = new UserModel({ email, psw });
+        const model = new UserModel({ email, psw });
 
-        const result = await user.getByLogin();
+        const result = await model.getByLogin();
 
         if (!result) {
           res.status(404).json({ msg: "Email e/ou senha incorreto(s)" });

@@ -5,8 +5,8 @@ import { PropertyDTO } from "../types/property";
 export default class PropertyController {
   async getAll(_, res: Response) {
     try {
-      let property = new PropertyModel();
-      let list = await property.getAll();
+      let model = new PropertyModel();
+      let list = await model.getAll();
 
       if (!list) {
         res.status(404).json({ msg: "Imóvel não encontrado" });
@@ -26,8 +26,8 @@ export default class PropertyController {
       const { id } = req.params;
 
       if (id) {
-        let property = new PropertyModel({ id });
-        const propertyFound = await property.getById();
+        let model = new PropertyModel({ id });
+        const propertyFound = await model.getById();
 
         if (propertyFound) {
           res.status(200).json(propertyFound);
@@ -63,7 +63,7 @@ export default class PropertyController {
         price &&
         available !== undefined
       ) {
-        let property = new PropertyModel({
+        let model = new PropertyModel({
           description,
           address,
           city,
@@ -72,7 +72,7 @@ export default class PropertyController {
           price,
           available,
         });
-        const result = property.create();
+        const result = model.create();
 
         if (!result) {
           throw new Error();
@@ -113,7 +113,7 @@ export default class PropertyController {
           price ||
           available !== undefined)
       ) {
-        let property = new PropertyModel({
+        let model = new PropertyModel({
           id,
           description,
           address,
@@ -124,14 +124,14 @@ export default class PropertyController {
           available,
         });
 
-        const propertyFound = await property.getById();
+        const propertyFound = await model.getById();
 
         if (!propertyFound) {
           res.status(404).json({ msg: "Imóvel não encontrado" });
           return;
         }
 
-        const result = await property.update();
+        const result = await model.update();
 
         if (!result) {
           throw new Error();
@@ -154,16 +154,16 @@ export default class PropertyController {
       const { id } = req.params;
 
       if (id) {
-        let property = new PropertyModel({ id });
+        let model = new PropertyModel({ id });
 
-        const propertyFound = await property.getById();
+        const propertyFound = await model.getById();
 
         if (!propertyFound) {
           res.status(404).json({ msg: "Imóvel não encontrado" });
           return;
         }
 
-        const result = await property.delete();
+        const result = await model.delete();
 
         if (!result) {
           throw new Error();
