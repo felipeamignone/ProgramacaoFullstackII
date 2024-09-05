@@ -1,7 +1,4 @@
 import { Request, Response } from "express";
-import UserModel from "../models/user";
-import { UserDTO } from "../types/user";
-import UserType from "../models/userType";
 import PropertyModel from "../models/property";
 import { PropertyDTO } from "../types/property";
 
