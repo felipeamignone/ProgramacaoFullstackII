@@ -45,7 +45,7 @@ export default class PropertyController {
     }
   }
 
-  create(req: Request<any, any, PropertyDTO>, res: Response) {
+  async create(req: Request<any, any, PropertyDTO>, res: Response) {
     try {
       const {
         description,
@@ -64,7 +64,7 @@ export default class PropertyController {
         district &&
         zipCode &&
         price &&
-        available
+        available !== undefined
       ) {
         let property = new PropertyModel({
           description,
@@ -114,9 +114,10 @@ export default class PropertyController {
           district ||
           zipCode ||
           price ||
-          available)
+          available !== undefined)
       ) {
         let property = new PropertyModel({
+          id,
           description,
           address,
           city,
@@ -129,7 +130,7 @@ export default class PropertyController {
         const propertyFound = await property.getById();
 
         if (!propertyFound) {
-          res.status(404).json({ msg: "Usuário não encontrado" });
+          res.status(404).json({ msg: "Imóvel não encontrado" });
           return;
         }
 
@@ -139,7 +140,7 @@ export default class PropertyController {
           throw new Error();
         }
 
-        res.status(200).json({ msg: "Usuário atualizado com sucesso!" });
+        res.status(200).json({ msg: "Imóvel atualizado com sucesso!" });
         return;
       }
 
@@ -156,22 +157,22 @@ export default class PropertyController {
       const { id } = req.params;
 
       if (id) {
-        let user = new UserModel({ id });
+        let property = new PropertyModel({ id });
 
-        const userFound = await user.getById();
+        const propertyFound = await property.getById();
 
-        if (!userFound) {
-          res.status(404).json({ msg: "Usuário não encontrado" });
+        if (!propertyFound) {
+          res.status(404).json({ msg: "Imóvel não encontrado" });
           return;
         }
 
-        const result = await user.delete();
+        const result = await property.delete();
 
         if (!result) {
           throw new Error();
         }
 
-        res.status(200).json({ msg: "Usuário deletado com sucesso!" });
+        res.status(200).json({ msg: "Imóvel deletado com sucesso!" });
         return;
       }
 

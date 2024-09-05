@@ -132,6 +132,8 @@ export default class PropertyModel {
     const sql =
       "insert into tb_imovel (imv_descricao, imv_cep, imv_endereco, imv_bairro, imv_cidade, imv_valor, imv_disponivel) values (?, ?, ?, ?, ?, ?, ?)";
 
+    const availableDBValue = this.#available ? "S" : "N";
+
     const values = [
       this.#description,
       this.#zipCode,
@@ -139,7 +141,7 @@ export default class PropertyModel {
       this.#district,
       this.#city,
       this.#price,
-      this.#available,
+      availableDBValue,
     ];
 
     const result = await dispatchNonQuery(sql, values);
@@ -159,6 +161,8 @@ export default class PropertyModel {
         where imv_id = ?
     `;
 
+    const availableDBValue = this.#available ? "S" : "N";
+
     const values = [
       this.#description,
       this.#zipCode,
@@ -166,7 +170,7 @@ export default class PropertyModel {
       this.#district,
       this.#city,
       this.#price,
-      this.#available,
+      availableDBValue,
       this.#id,
     ];
 

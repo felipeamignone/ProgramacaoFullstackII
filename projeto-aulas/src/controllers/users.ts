@@ -38,7 +38,7 @@ export default class UsersController {
     }
   }
 
-  create(req: Request<any, any, UserDTO>, res: Response) {
+  async create(req: Request<any, any, UserDTO>, res: Response) {
     try {
       const { name, email, active, psw, type } = req.body;
 
@@ -50,7 +50,7 @@ export default class UsersController {
           psw,
           type: new UserType(type),
         });
-        const result = user.create();
+        const result = await user.create();
 
         if (!result) {
           throw new Error();
