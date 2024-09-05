@@ -34,7 +34,12 @@ const addSwaggerLoginTag = (_, __, next: NextFunction) => {
 const router = Router();
 
 router.use("/api/users/", validateUserByToken, addSwaggerUsersTag, usersRouter);
-router.use("/api/properties/", addSwaggerPropertiesTag, propertiesRouters);
+router.use(
+  "/api/properties/",
+  validateUserByToken,
+  addSwaggerPropertiesTag,
+  propertiesRouters
+);
 router.use("/api/login", addSwaggerLoginTag, loginRouter);
 
 export default router;
