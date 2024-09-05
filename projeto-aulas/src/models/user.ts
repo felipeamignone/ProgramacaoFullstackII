@@ -1,5 +1,5 @@
 import { UserDTO, UserDB, UserTypeDB } from "../types/user";
-import { mapUserDBToModel } from "../utils/functionUtils";
+import { mapUserDBToModel } from "../utils/mappers";
 import { dispatchQuery, dispatchNonQuery } from "../db";
 import UserType from "./userType";
 
